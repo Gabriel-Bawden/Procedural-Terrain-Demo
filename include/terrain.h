@@ -5,6 +5,7 @@
 
 #include "mesh.h"
 #include "texture.h"
+#include "perlin.h"
 
 struct terrain
 {
@@ -37,6 +38,8 @@ struct terrain
 
 	struct texture textures[7];
 	struct mesh mesh;
+
+	struct perlin perlin;
 };
 
 void terrain_create(struct terrain *terrain, size_t w, size_t h, int seed);

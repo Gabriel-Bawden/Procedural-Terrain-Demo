@@ -462,8 +462,7 @@ void terrain_draw(struct terrain *terrain, float sea)
 
 void terrain_generate(struct terrain *terrain)
 {
-	struct perlin perlin;
-	perlin_create(&perlin, terrain->seed);
+	perlin_create(&terrain->perlin, terrain->seed);
 
 	//float min = 0.0f;
 	//float max = 0.0f;
@@ -481,12 +480,21 @@ void terrain_generate(struct terrain *terrain)
 	{
 		for (size_t j = 0; j < terrain->h; j++)
 		{
-			float p1 = perlin_val(&perlin, (float)i, (float)j, 8, terrain->scale, 2.0f, 0.5f);
+			float p1 = perlin_val(&terrain->perlin, (float)i, (float)j, 8, terrain->scale, 2.0f, 0.5f);
 
 			terrain->altitude[i + terrain->w * j] = p1;
 
 			//if (alt[i + w * j] > max) max = alt[i + w * j];
 			//if (alt[i + w * j] < min) min = alt[i + w * j];
+
+			//
+			//float p2 = perlin_val(&perlin, (float)(i + terrain->w), (float)(j + terrain->h), 8, terrain->scale * 2.5f, 2.0f, 0.5f);
+
+			//if (p2 > 0.6)
+			//{
+			//	terrain->altitude[i + terrain->w * j] += 3 * p2;
+			//}
+			//
 		}
 	}
 
@@ -714,7 +722,7 @@ void terrain_water_flow2(struct terrain *terrain)
 		sin_angle = math_min_float(sin_angle, 0.7f);
 		sin_angle = math_max_float(sin_angle, 0.1f);
 
-		float capacity = terrain->k_capacity * sin_angle * velocity_magnitude;
+		float capacity = terrain->k_capacity * sin_angle * velocity_magnitude; //sin_angle / 0.0008f | 0.0008f is roughly the median sin_angle
 
 		float sed = terrain->sediment[i];
 
@@ -856,20 +864,6 @@ void terrain_water_flow(struct terrain *terrain)
 		}
 	}
 
-	//for (size_t i = 0; i < terrain->w * terrain->h; i++)
-	//{
-	//	//if (!(utl_rand() % (int)(1 / 0.09f))) //0.1f
-	//	if (!(utl_rand() % 11))
-	//	{
-	//		terrain->water[i] += terrain->dt * 0.005f; //0.01f, 0.005f
-	//	}
-	//}
-
-	//for (size_t i = 0; i < terrain->w * terrain->h; i++)
-	//{
-	//	terrain->water[i] += terrain->dt * 0.01f; //0.0007f, 0.01f
-	//}
-
 	//Must be greater than 0 due to float rounding issues. The issue arises when k_evap is 0 and the build is in release
 	float zero = 0.000001f;
 
@@ -980,28 +974,28 @@ void terrain_water_flow(struct terrain *terrain)
 		unsigned char neighbors_exist[4];
 		terrain_get_nearest(neighbors, neighbors_exist, i, terrain->w, terrain->h);
 
-		float max_neighbor = -1000;
-		float min_neighbor = 1000;
+		float altitude_neighbor_max = -1000;
+		float altitude_neighbor_min = 1000;
 
 		for (size_t j = 0; j < 4; j++)
 		{
 			if (neighbors_exist[j])
 			{
-				float alt_cur = terrain->altitude[neighbors[j]];
+				float altitude_neighbor = terrain->altitude[neighbors[j]];
 
-				if (alt_cur > max_neighbor)
+				if (altitude_neighbor > altitude_neighbor_max)
 				{
-					max_neighbor = alt_cur;
+					altitude_neighbor_max = altitude_neighbor;
 				}
-				if (alt_cur < min_neighbor)
+				if (altitude_neighbor < altitude_neighbor_min)
 				{
-					min_neighbor = alt_cur;
+					altitude_neighbor_min = altitude_neighbor;
 				}
 			}
 		}
 
-		float max_diff = terrain->altitude[i] - max_neighbor;
-		float min_diff = terrain->altitude[i] - min_neighbor;
+		float max_diff = terrain->altitude[i] - altitude_neighbor_max;
+		float min_diff = terrain->altitude[i] - altitude_neighbor_min;
 
 		float velocity_magnitude = math_sqrt(terrain->velocity[2 * i + 0] * terrain->velocity[2 * i + 0] + terrain->velocity[2 * i + 1] * terrain->velocity[2 * i + 1]);
 
@@ -1043,7 +1037,7 @@ void terrain_water_flow(struct terrain *terrain)
 				terrain->altitude[i] += deposit;
 				terrain->sediment[i] -= deposit;
 
-				//
+				//Removing extra water to avoid causing ripples
 				terrain->water[i] = math_max_float(0, terrain->water[i] - deposit);
 
 				//Net Change Map
@@ -1055,5 +1049,28 @@ void terrain_water_flow(struct terrain *terrain)
 	for (size_t i = 0; i < terrain->w * terrain->h; i++)
 	{
 		terrain->water[i] = math_max_float(0, terrain->water[i] - terrain->k_evap * terrain->dt);
+
+		//Doesn't work well at lower rain amounts compared to drop method
+		//terrain->water[i] += terrain->dt * 0.0012f; //0.0007f, 0.01f, 0.0012f
+
+
+
+
+		//size_t x = i % terrain->w;
+		//size_t y = i / terrain->w;
+
+		//float ptest = perlin_val(&terrain->perlin, (float)(x + terrain->w), (float)(y + terrain->h), 8, terrain->scale * 2.5f, 2.0f, 0.5f);
+
+		//if (ptest > 0.6)
+		//{
+		//	terrain->altitude[i] += ptest / 100000;
+		//}
+
+		//float ptest = perlin_val(&terrain->perlin, (float)(x), (float)(y), 8, terrain->scale, 2.0f, 0.5f);
+
+		//if (ptest > 0.55)
+		//{
+		//	terrain->altitude[i] += ptest / 10000;
+		//}
 	}
 }
