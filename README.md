@@ -74,7 +74,7 @@ The following table shows how the terrain can differ based on the settings. The 
 ## Controls
 
 | Keys | Action |
-| - | - |
+| :---: | :---: |
 | S | Zoom out |
 | W | Zoom in |
 | A | Move left |
