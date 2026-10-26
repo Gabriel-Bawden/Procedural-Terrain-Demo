@@ -40,12 +40,12 @@ void terrain_create(struct terrain *terrain, size_t w, size_t h, int seed)
 
 	terrain->erosion_flag = 0;
 
-	texture_create(&terrain->textures[0], terrain->w, terrain->h, "terrain");
-	texture_create(&terrain->textures[1], terrain->w, terrain->h, "heightmap");
+	texture_create(&terrain->textures[0], terrain->w, terrain->h, "heightmap_color");
+	texture_create(&terrain->textures[1], terrain->w, terrain->h, "heightmap_grayscale");
 	texture_create(&terrain->textures[2], terrain->w, terrain->h, "water");
 	texture_create(&terrain->textures[3], terrain->w, terrain->h, "velocity");
 	texture_create(&terrain->textures[4], terrain->w, terrain->h, "sediment");
-	texture_create(&terrain->textures[5], terrain->w, terrain->h, "height_change");
+	texture_create(&terrain->textures[5], terrain->w, terrain->h, "heightmap_net_change");
 	texture_create(&terrain->textures[6], terrain->w, terrain->h, "watershed");
 
 	mesh_create(&terrain->mesh, 2 * (terrain->w - 1) * (terrain->h - 1), terrain->w * terrain->h, 0, 0, "terrain");
@@ -351,112 +351,159 @@ void terrain_draw_rivers(struct terrain *terrain, float sea)
 
 void terrain_draw(struct terrain *terrain, float sea)
 {
-	memset(terrain->textures[0].pixels, 255, 4 * terrain->w * terrain->h * sizeof(*terrain->textures[0].pixels));
-
-	for (size_t i = 0; i < terrain->w; i++)
+	for (size_t i = 0; i < terrain->w * terrain->h; i++)
 	{
-		for (size_t j = 0; j < terrain->h; j++)
+		size_t x = i % terrain->w;
+		size_t y = i / terrain->w;
+
+		//Color heightmap
+		float z = terrain->altitude[i];
+
+		float max_height = 3.0f;
+
+		float c1 = 0.01f;
+		float c2 = 0.4f;
+		float c3 = 0.6f;
+		float c4 = 0.8f;
+		float c5 = 0.9f;
+		float c6 = 1.0f;
+
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
+
+		if (z <= sea)
 		{
-			size_t index = i + terrain->w * j;
-			float z = terrain->altitude[index];
+			float m = (sea - z) / (sea - 0);
+			m = 1 - m;
+			m = (m + 1) / 2;
 
-			float max_height = 3.0f;
-
-			float c1 = 0.01f;
-			float c2 = 0.4f;
-			float c3 = 0.6f;
-			float c4 = 0.8f;
-			float c5 = 0.9f;
-			float c6 = 1.0f;
-
-			if (z <= sea)
-			{
-				float m = (sea - z) / (sea - 0);
-				m = 1 - m;
-				m = (m + 1) / 2;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(20 * m), (unsigned char)(40 * m), (unsigned char)(220 * m));
-			}
-			else if (z < sea + c1)
-			{
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, 238, 214, 175);
-			}
-			else if (z < sea + c2)
-			{
-				float m = (sea + c2 - z) / (c2 - c1);
-				m = 1 - m;
-				m = (m + 1) / 2;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(34 * m), (unsigned char)(139 * m), (unsigned char)(34 * m));
-			}
-			else if (z < sea + c3)
-			{
-				float m = (sea + c3 - z) / (c3 - c2);
-				m = (m + 1) / 2;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(60 * m), (unsigned char)(139 * m), (unsigned char)(34 * m));
-			}
-			else if (z < sea + c4)
-			{
-				float m = (sea + c4 - z) / (c4 - c3);
-				m = (m + 1) / 2;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(35 * m), (unsigned char)(65 * m), (unsigned char)(20 * m));
-			}
-			else if (z < sea + c5)
-			{
-				float m = (sea + c5 - z) / (c5 - c4);
-				m = (m + 1) / 2;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(25 * m), (unsigned char)(30 * m), (unsigned char)(10 * m));
-			}
-			else if (z < sea + c6)
-			{
-				float m = (sea + c6 - z) / (c6 - c5);
-				m = (m + 1) / 2;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(20 * m), (unsigned char)(15 * m), (unsigned char)(10 * m));
-			}
-			else if (z < sea + max_height)
-			{
-				float m = (sea + max_height - z) / (max_height - c6);
-				m = 1 - m;
-				m = (m + 0.5f) / 1.5f;
-
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, (unsigned char)(255 * m), (unsigned char)(255 * m), (unsigned char)(255 * m));
-			}
-			else
-			{
-				render_DrawPixel(terrain->textures[0].pixels, terrain->w, i, j, 255, 255, 255);
-			}
-
-			render_DrawPixel(terrain->textures[1].pixels, terrain->w, i, j, (unsigned char)(255 * z), (unsigned char)(255 * z), (unsigned char)(255 * z));
-
-			//
-			float change = terrain->change_map[index];
-
-			if (change >= 0)
-			{
-				render_DrawPixel(terrain->textures[5].pixels, terrain->w, i, j, 0, (unsigned char)(255 * change * 10), 0);
-			}
-			else
-			{
-				render_DrawPixel(terrain->textures[5].pixels, terrain->w, i, j, (unsigned char)(255 * -change * 10), 0, 0);
-			}
-			//
-
-			float water_amount = 3 * terrain->water[index];
-
-			render_DrawPixel(terrain->textures[2].pixels, terrain->w, i, j, 0, (unsigned char)(water_amount * 30), (unsigned char)(water_amount * 120));
-
-			float velocity_magnitude = 5 * math_sqrt(terrain->velocity[2 * index + 0] * terrain->velocity[2 * index + 0] + terrain->velocity[2 * index + 1] * terrain->velocity[2 * index + 1]);
-
-			render_DrawPixel(terrain->textures[3].pixels, terrain->w, i, j, (unsigned char)(velocity_magnitude * 120), (unsigned char)(velocity_magnitude * 30), 0);
-
-			float sediment_amount = 10 * terrain->sediment[index];
-
-			render_DrawPixel(terrain->textures[4].pixels, terrain->w, i, j, (unsigned char)(sediment_amount * 120), (unsigned char)(sediment_amount * 120), 0);
+			r = (unsigned char)(math_min_float((math_max_float(20 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(40 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(220 * m, 0)), 255));
 		}
+		else if (z < sea + c1)
+		{
+			r = 238;
+			g = 214;
+			b = 175;
+		}
+		else if (z < sea + c2)
+		{
+			float m = (sea + c2 - z) / (c2 - c1);
+			m = 1 - m;
+			m = (m + 1) / 2;
+
+			r = (unsigned char)(math_min_float((math_max_float(34 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(139 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(34 * m, 0)), 255));
+		}
+		else if (z < sea + c3)
+		{
+			float m = (sea + c3 - z) / (c3 - c2);
+			m = (m + 1) / 2;
+
+			r = (unsigned char)(math_min_float((math_max_float(60 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(139 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(34 * m, 0)), 255));
+		}
+		else if (z < sea + c4)
+		{
+			float m = (sea + c4 - z) / (c4 - c3);
+			m = (m + 1) / 2;
+
+			r = (unsigned char)(math_min_float((math_max_float(35 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(65 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(20 * m, 0)), 255));
+		}
+		else if (z < sea + c5)
+		{
+			float m = (sea + c5 - z) / (c5 - c4);
+			m = (m + 1) / 2;
+
+			r = (unsigned char)(math_min_float((math_max_float(25 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(30 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(10 * m, 0)), 255));
+		}
+		else if (z < sea + c6)
+		{
+			float m = (sea + c6 - z) / (c6 - c5);
+			m = (m + 1) / 2;
+
+			r = (unsigned char)(math_min_float((math_max_float(20 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(15 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(10 * m, 0)), 255));
+		}
+		else if (z < sea + max_height)
+		{
+			float m = (sea + max_height - z) / (max_height - c6);
+			m = 1 - m;
+			m = (m + 0.5f) / 1.5f;
+
+			r = (unsigned char)(math_min_float((math_max_float(255 * m, 0)), 255));
+			g = (unsigned char)(math_min_float((math_max_float(255 * m, 0)), 255));
+			b = (unsigned char)(math_min_float((math_max_float(255 * m, 0)), 255));
+		}
+		else
+		{
+			r = 255;
+			g = 255;
+			b = 255;
+		}
+
+		render_DrawPixel(terrain->textures[0].pixels, terrain->w, x, y, r, g, b);
+
+		//Grayscale heightmap
+		r = (unsigned char)(math_min_float((math_max_float(255 * z, 0)), 255));
+		g = (unsigned char)(math_min_float((math_max_float(255 * z, 0)), 255));
+		b = (unsigned char)(math_min_float((math_max_float(255 * z, 0)), 255));
+
+		render_DrawPixel(terrain->textures[1].pixels, terrain->w, x, y, r, g, b);
+
+		//Water
+		float water_amount = 3 * terrain->water[i];
+
+		r = 0;
+		g = (unsigned char)(math_min_float((math_max_float(water_amount * 30, 0)), 255));
+		b = (unsigned char)(math_min_float((math_max_float(water_amount * 120, 0)), 255));
+
+		render_DrawPixel(terrain->textures[2].pixels, terrain->w, x, y, r, g, b);
+
+		//Velocity
+		float velocity_magnitude = 5 * math_sqrt(terrain->velocity[2 * i + 0] * terrain->velocity[2 * i + 0] + terrain->velocity[2 * i + 1] * terrain->velocity[2 * i + 1]);
+
+		r = (unsigned char)(math_min_float((math_max_float(velocity_magnitude * 120, 0)), 255));
+		g = (unsigned char)(math_min_float((math_max_float(velocity_magnitude * 30, 0)), 255));
+		b = 0;
+
+		render_DrawPixel(terrain->textures[3].pixels, terrain->w, x, y, r, g, b);
+
+		//Sediment
+		float sediment_amount = 10 * terrain->sediment[i];
+
+		r = (unsigned char)(math_min_float((math_max_float(sediment_amount * 120, 0)), 255));
+		g = (unsigned char)(math_min_float((math_max_float(sediment_amount * 120, 0)), 255));
+		b = 0;
+
+		render_DrawPixel(terrain->textures[4].pixels, terrain->w, x, y, r, g, b);
+
+		//Net change
+		float change = terrain->change_map[i];
+
+		if (change >= 0)
+		{
+			r = 0;
+			g = (unsigned char)(math_min_float((math_max_float(255 * change * 10, 0)), 255));
+			b = 0;
+		}
+		else
+		{
+			r = (unsigned char)(math_min_float((math_max_float(255 * -change * 10, 0)), 255));
+			g = 0;
+			b = 0;
+		}
+
+		render_DrawPixel(terrain->textures[5].pixels, terrain->w, x, y, r, g, b);
 	}
 }
 
@@ -464,8 +511,10 @@ void terrain_generate(struct terrain *terrain)
 {
 	perlin_create(&terrain->perlin, terrain->seed);
 
-	//float min = 0.0f;
-	//float max = 0.0f;
+	for (size_t i = 0; i < sizeof(terrain->textures) / sizeof(*terrain->textures); i++)
+	{
+		memset(terrain->textures[i].pixels, 255, 4 * terrain->textures[i].w * terrain->textures[i].h * sizeof(*terrain->textures[i].pixels));
+	}
 
 	memset(terrain->altitude, 0, terrain->w * terrain->h * sizeof(*terrain->altitude));
 	memset(terrain->water, 0, terrain->w * terrain->h * sizeof(*terrain->water));
@@ -473,8 +522,10 @@ void terrain_generate(struct terrain *terrain)
 	memset(terrain->water_outflow, 0, 4 * terrain->w * terrain->h * sizeof(*terrain->water_outflow));
 	memset(terrain->sediment_outflow, 0, 4 * terrain->w * terrain->h * sizeof(*terrain->sediment_outflow));
 	memset(terrain->velocity, 0, 2 * terrain->w * terrain->h * sizeof(*terrain->velocity));
-
 	memset(terrain->change_map, 0, terrain->w * terrain->h * sizeof(*terrain->change_map));
+
+	//float min = 0.0f;
+	//float max = 0.0f;
 
 	for (size_t i = 0; i < terrain->w; i++)
 	{
