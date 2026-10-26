@@ -6,6 +6,65 @@ This program allows the user to generate procedurally terrain and run an algorit
 
 ## Examples
 
+<table>
+  <tr>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 1
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 2
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 3
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 4
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 1
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 2
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 3
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 4
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 1
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 2
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 3
+    </td>
+    <td align="center">
+      <img src="" alt = "" width="250"><br>
+      Image 4
+    </td>
+  </tr>
+</table>
+
+
+
 ## Controls
 
 ## Interface
