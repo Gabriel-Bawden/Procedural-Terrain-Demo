@@ -405,6 +405,9 @@ int main()
 
 					texture_save(&terrain.textures[0]);
 					texture_save(&terrain.textures[1]);
+					texture_save(&terrain.textures[2]);
+					texture_save(&terrain.textures[3]);
+					texture_save(&terrain.textures[4]);
 					texture_save(&terrain.textures[5]);
 
 					graph_create(&terrain.mesh, terrain.altitude, 0.01f, terrain.w, terrain.h);
