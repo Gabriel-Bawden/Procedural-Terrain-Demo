@@ -78,3 +78,14 @@ The following table shows how the terrain can differ based on the settings. The 
 ### View
 
 ## Controls
+
+| Keys | Action |
+| - | - |
+| S | Zoom out |
+| W | Zoom in |
+| A | Move left |
+| D | Move right |
+| Left Shift | Move down |
+| Space | Move up |
+| Escape | Hide GUI |
+| Enter | Reset position |
