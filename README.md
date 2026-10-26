@@ -19,11 +19,11 @@ The following table shows how the terrain can differ based on the settings. The 
       Settings
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/files/33946303/heightmap_color_no_erosion.bmp" alt="heightmap_color_no_erosion" width="250"><br>
+      <img src="https://github.com/user-attachments/assets/dda1bbed-cd3a-44d6-8abe-78eb302a9ae4" alt="heightmap_color_no_erosion" width="250"><br>
       Heightmap
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/files/33946307/heightmap_net_change_no_erosion.bmp" alt="heightmap_net_change_no_erosion" width="250"><br>
+      <img src="https://github.com/user-attachments/assets/28a99dbb-bb5a-4b66-b55e-46c11ee6419f" alt="heightmap_net_change_no_erosion" width="250"><br>
       Net Change
     </td>
     <td align="center">
@@ -37,11 +37,11 @@ The following table shows how the terrain can differ based on the settings. The 
       Settings
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/files/33946360/heightmap_color_erosion_1.bmp" alt="heightmap_color_erosion_1" width="250"><br>
+      <img src="https://github.com/user-attachments/assets/9456f204-583a-45be-8f52-c8b94e1c8b30" alt="heightmap_color_erosion_1" width="250"><br>
       Heightmap
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/files/33946368/heightmap_net_change_erosion_1.bmp" alt="heightmap_net_change_erosion_1" width="250"><br>
+      <img src="https://github.com/user-attachments/assets/f89e9f7b-77a9-4e89-8aaf-716548f3befb" alt="heightmap_net_change_erosion_1" width="250"><br>
       Net Change
     </td>
     <td align="center">
@@ -55,11 +55,11 @@ The following table shows how the terrain can differ based on the settings. The 
       Settings
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/files/33946405/heightmap_color_erosion_2.bmp" alt="heightmap_color_erosion_2" width="250"><br>
+      <img src="https://github.com/user-attachments/assets/00afebf5-2c53-41c5-b13c-65eecf0ed9cf" alt="heightmap_color_erosion_2" width="250"><br>
       Heightmap
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/files/33946408/heightmap_net_change_erosion_2.bmp" alt="heightmap_net_change_erosion_2" width="250"><br>
+      <img src="https://github.com/user-attachments/assets/ce77096e-dd4a-4b53-a8b0-b6704277c4a7" alt="heightmap_net_change_erosion_2" width="250"><br>
       Net Change
     </td>
     <td align="center">
