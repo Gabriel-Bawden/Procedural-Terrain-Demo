@@ -153,5 +153,5 @@ The following table shows examples of the different views:
 | D | Move right |
 | Left Shift | Move down |
 | Space | Move up |
-| Escape | Hide GUI |
+| Escape | Toggle GUI |
 | Enter | Reset position |
