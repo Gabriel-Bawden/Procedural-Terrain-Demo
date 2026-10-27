@@ -2,7 +2,7 @@
 
 ## Overview
 
-This program allows the user to generate procedurally terrain and run an algorithm to simulate effects such as erosion and deposition. The initial terrain is generated using several layers of Perlin noise. The erosion algorithm used is a modified version of the algorithm described here: https://inria.hal.science/inria-00402079/document. The user can export the results as BMP images and MDL model files.
+This program allows the user to generate procedural terrain and run an algorithm to simulate effects such as erosion and deposition. The initial terrain is generated using several layers of Perlin noise. The erosion algorithm used is a modified version of the algorithm described here: https://inria.hal.science/inria-00402079/document. The user can export the results as BMP images and MDL model files.
 
 <p align="center">
   <img src="images/program.png" alt="program" width="400">
