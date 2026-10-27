@@ -125,7 +125,7 @@ The following table shows examples of the different views:
       <img src="images/water_erosion_2.png" alt="water_erosion_2" width="250"><br>
     </td>
   </tr>
-    <tr>
+  <tr>
     <td align="center">Velocity</td>
     <td align="center">Sediment</td>
     <td align="center">Net Change</td>
