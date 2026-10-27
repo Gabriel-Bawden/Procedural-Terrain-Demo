@@ -2,7 +2,7 @@
 
 ## Overview
 
-This program allows the user to generate procedural terrain and run an algorithm to simulate effects such as erosion and deposition. The initial terrain is generated using several layers of Perlin noise. The erosion algorithm used is a modified version of the algorithm described here: https://inria.hal.science/inria-00402079/document. The user can export the results as BMP images and MDL model files.
+With this program, the user can generate procedural terrain and run an algorithm to simulate effects such as erosion and deposition. The initial terrain is generated using several layers of Perlin noise. The erosion algorithm used is a modified version of the algorithm described here: https://inria.hal.science/inria-00402079/document. The user can export the results as BMP images and MDL model files.
 
 <p align="center">
   <img src="images/program.png" alt="program" width="400">
@@ -73,7 +73,9 @@ The interface consists of three tabs, Terrain, Simulation, and View, which enabl
   <img src="images/settings_no_erosion.png" alt="settings_no_erosion" width="250">
 </p>
 
-The Terrain tab contains options for the terrain's initial generation as well as an option to save and export the results. The user can input a specific seed or request a random seed. The scale slider alters the terrain's zoom level. A higher scale results in terrain that appears more zoomed out and lower in resolution. Once satisfied with the options, the user can click generate to create the initial terrain. If the user clicks save, then the current state of the terrain is exported as a BMP image and and MDL file. The MDL file can be converted to an OBJ file using the provided `model_converter.py` script.
+The Terrain tab contains options for the terrain's initial generation as well as an option to save and export the results. The user can input a specific seed or request a random seed. The scale slider alters the terrain's zoom level. A higher scale results in terrain that appears more zoomed out and lower in resolution.
+
+Once satisfied with the options, the user can click generate to create the initial terrain. If the user clicks save, then the current state of the terrain is exported as a BMP image and an MDL file. The MDL file can be converted to an OBJ file using the provided `model_converter.py` script.
 
 ### Simulation
 
@@ -102,7 +104,7 @@ The View tab enables the user to choose what information is displayed. The seven
 - **Grayscale**: The terrain's heightmap in grayscale
 - **Water**: The amount of water present at each tile
 - **Velocity**: The velocity of the water at each tile
-- **Sediment**: The amount of sediment at each tile
+- **Sediment**: The amount of sediment present at each tile
 - **Net Change**: The net change in the terrain's heightmap over the course of the simulation, with red for negative and green for positive
 - **Watershed**: Calculates the watersheds for the terrain. Generated only on save
 
